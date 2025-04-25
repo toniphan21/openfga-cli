@@ -1,0 +1,11 @@
+import "lib/gen.pkl"
+
+class ProjectAssertions extends gen.BaseProjectAssertions {
+  // you can put some custom assertions in this class
+
+}
+
+class TenantAssertions extends gen.BaseTenantAssertions {
+  // you can put some custom assertions in this class
+
+}

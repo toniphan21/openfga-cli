@@ -1,0 +1,25 @@
+import "type.pkl"
+import "lib/test.pkl"
+
+// NOTE: this is where you define your type for testing, for example:
+// local Anna: type.User = new type.User { id = "Anna" }
+// local OpenFGA: type.Org = new type.Org { id = "OpenFGA" }
+
+suite: test.OpenFGATestSuite = new {
+  name = "Awesome test - RENAME ME"
+  model = read("../model.fga")
+  setup {
+    // NOTE: setup your test here, for example:
+    // Anna.relation_owner(OpenFGA)
+  }
+  tests {
+    // NOTE: write your assertions here, for example:
+    // Anna.in_org(OpenFGA, (she) -> new Listing {
+    //   she.should_be_member
+    //   she.should_be_owner("comment or reason")
+    // })
+  }
+}
+
+output { value = test.output_value(suite) }
+

@@ -1,0 +1,71 @@
+import "lib/gen.pkl"
+import "assertions.pkl"
+
+class Project extends gen.BaseProject {
+  // -------------------------------------------------------
+  // pkl not support parent's properties yet, this help in case we want to use id
+  // also if we use some union types we could change here.
+  id: String
+  hidden type: String = "project"
+  hidden fgaType: String = "project"
+  function toFGAType() = "\(type):\(id)"
+  function toFGATypeWith(relation: String) = "\(type):\(id)#\(relation)"
+  // -------------------------------------------------------
+
+  // this is where you make your tests look nicer, for example:
+  // 
+  // Using a function with descriptive name make setup of test is easier to understand
+  // function has_user(i: User) = i.relation_member(this)
+  // 
+  // Using Assertions with descriptive name make the test easier to understand
+  // function in_org(org: Org, asserts: (assertions.OrgAssertions) -> Listing) =
+  //   assert_org("Test user \(id) in org \(org.id)", org, new assertions.OrgAssertions {}, asserts)
+
+}
+
+class Tenant extends gen.BaseTenant {
+  // -------------------------------------------------------
+  // pkl not support parent's properties yet, this help in case we want to use id
+  // also if we use some union types we could change here.
+  id: String
+  hidden type: String = "tenant"
+  hidden fgaType: String = "tenant"
+  function toFGAType() = "\(type):\(id)"
+  function toFGATypeWith(relation: String) = "\(type):\(id)#\(relation)"
+  // -------------------------------------------------------
+
+  // this is where you make your tests look nicer, for example:
+  // 
+  // Using a function with descriptive name make setup of test is easier to understand
+  // function has_user(i: User) = i.relation_member(this)
+  // 
+  // Using Assertions with descriptive name make the test easier to understand
+  // function in_org(org: Org, asserts: (assertions.OrgAssertions) -> Listing) =
+  //   assert_org("Test user \(id) in org \(org.id)", org, new assertions.OrgAssertions {}, asserts)
+
+}
+
+class User extends gen.BaseUser {
+  // -------------------------------------------------------
+  // pkl not support parent's properties yet, this help in case we want to use id
+  // also if we use some union types we could change here.
+  id: String
+  hidden type: String = "user"
+  hidden fgaType: String = "user"
+  function toFGAType() = "\(type):\(id)"
+  function toFGATypeWith(relation: String) = "\(type):\(id)#\(relation)"
+  // -------------------------------------------------------
+
+  // this is where you make your tests look nicer, for example:
+  // 
+  // Using a function with descriptive name make setup of test is easier to understand
+  // function has_user(i: User) = i.relation_member(this)
+  // 
+  // Using Assertions with descriptive name make the test easier to understand
+  // function in_org(org: Org, asserts: (assertions.OrgAssertions) -> Listing) =
+  //   assert_org("Test user \(id) in org \(org.id)", org, new assertions.OrgAssertions {}, asserts)
+
+  function in_project(project: Project, asserts: (assertions.ProjectAssertions) -> Listing) =
+    assert_project("test user \(id) in project \(project.id)", project, new assertions.ProjectAssertions {}, asserts)
+
+}

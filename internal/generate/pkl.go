@@ -2,12 +2,13 @@ package generate
 
 import (
 	"fmt"
+	"slices"
+	"strings"
+
 	"github.com/iancoleman/strcase"
 	"github.com/openfga/cli/internal/build"
 	openfga "github.com/openfga/go-sdk"
 	"golang.org/x/exp/maps"
-	"slices"
-	"strings"
 )
 
 var versionStr = fmt.Sprintf("v`%s` (commit: `%s`, date: `%s`)", build.Version, build.Commit, build.Date)
@@ -262,18 +263,18 @@ func (g *PklGenerator) generateBaseAssertions(assertions *[]genAssertion, gen *s
 			if g.Convention.isNoun(t.name, rel) {
 				p := g.Convention.getAssertPositiveForNounPrefix(t.name)
 				n := g.Convention.getAssertNegativeForNounPrefix(t.name)
-				g.writeRelationAssertions(gen, p, n, rel)
+				g.writeRelationAssertions(gen, p+rel, n+rel, rel)
 				nouns = append(nouns, rel)
 			} else {
-				p := g.Convention.getAssertPositiveForVerbPrefix(t.name)
-				n := g.Convention.getAssertNegativeForVerbPrefix(t.name)
+				p := g.Convention.getAssertPositiveForVerb(t.name, rel)
+				n := g.Convention.getAssertNegativeForVerb(t.name, rel)
 				g.writeRelationAssertions(gen, p, n, rel)
 				verbs = append(verbs, rel)
 			}
 
 			p := g.Convention.getAssertHasRelationPrefix(t.name)
 			n := g.Convention.getAssertDoNotHaveRelationPrefix(t.name)
-			g.writeRelationAssertions(gen, p, n, rel)
+			g.writeRelationAssertions(gen, p+rel, n+rel, rel)
 		}
 
 		p := g.Convention.getAssertHasAllRelations(t.name)
@@ -297,12 +298,12 @@ func (g *PklGenerator) writeRelationAssertions(gen *strings.Builder, p, n, rel s
 		writeLine(gen, "")
 	}
 	if p != "" {
-		writeLine(gen, `  %v%v = %v%v("")`, p, rel, p, rel)
-		writeLine(gen, `  function %v%v(reason: String) = new Mapping { ["%v"] = true }`, p, rel, rel)
+		writeLine(gen, `  %v = %v("")`, p, p)
+		writeLine(gen, `  function %v(reason: String) = new Mapping { ["%v"] = true }`, p, rel)
 	}
 	if n != "" {
-		writeLine(gen, `  %v%v = %v%v("")`, n, rel, n, rel)
-		writeLine(gen, `  function %v%v(reason: String) = new Mapping { ["%v"] = false }`, n, rel, rel)
+		writeLine(gen, `  %v = %v("")`, n, n)
+		writeLine(gen, `  function %v(reason: String) = new Mapping { ["%v"] = false }`, n, rel)
 	}
 }
 
@@ -517,18 +518,24 @@ func (c *PklConvention) getAssertNegativeForNounPrefix(userType string) string {
 	return "should_not_be_"
 }
 
-func (c *PklConvention) getAssertPositiveForVerbPrefix(userType string) string {
+func (c *PklConvention) getAssertPositiveForVerb(userType, rel string) string {
 	if cf, ok := c.Config[userType]; ok && cf.AssertPositiveForVerbPrefix != "" {
-		return c.allowNone(cf.AssertPositiveForVerbPrefix)
+		return c.allowNone(cf.AssertPositiveForVerbPrefix) + rel
 	}
-	return "can_"
+	if strings.HasPrefix(rel, "can_") {
+		return rel
+	}
+	return "can_" + rel
 }
 
-func (c *PklConvention) getAssertNegativeForVerbPrefix(userType string) string {
+func (c *PklConvention) getAssertNegativeForVerb(userType, rel string) string {
 	if cf, ok := c.Config[userType]; ok && cf.AssertNegativeForVerbPrefix != "" {
-		return c.allowNone(cf.AssertNegativeForVerbPrefix)
+		return c.allowNone(cf.AssertNegativeForVerbPrefix) + rel
 	}
-	return "cannot_"
+	if strings.HasPrefix(rel, "can_") {
+		return "cannot_" + rel[len("can_"):]
+	}
+	return "cannot_" + rel
 }
 
 func (c *PklConvention) isNoun(userType, name string) bool {

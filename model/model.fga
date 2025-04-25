@@ -1,0 +1,17 @@
+model
+  schema 1.1
+
+type user
+
+type tenant
+    relations
+        define admin: [user]
+        define member: [user]
+
+type project
+    relations
+        define tenant: [tenant]
+        define owner: [user]
+        define can_read: owner or (admin from tenant)
+        define can_write: owner or (admin from tenant)
+

@@ -1,0 +1,24 @@
+import "type.pkl"
+import "lib/test.pkl"
+
+local Anna: type.User = new type.User { id = "Anna" }
+local SWM: type.Tenant = new type.Tenant { id = "SWM" }
+local ProjectA: type.Project = new type.Project { id = "ProjectA" }
+
+suite: test.OpenFGATestSuite = new {
+  name = "Basic test"
+  model = read("../model.fga")
+  setup {
+    Anna.relation_admin(SWM)
+    SWM.relation_tenant(ProjectA)
+  }
+  tests {
+    Anna.in_project(ProjectA, (she) -> new Listing {
+      she.should_not_be_owner
+      she.can_read
+   })
+  }
+}
+
+output { value = test.output_value(suite) }
+

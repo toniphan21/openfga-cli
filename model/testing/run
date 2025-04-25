@@ -1,0 +1,13 @@
+#!/bin/bash
+param=$1
+if [ "$param" == "all" ]; then
+  tests=`ls ./test*.pkl`
+  for test in $tests
+  do
+    echo "--- running test file: $test"
+    pkl eval -f yaml $test | fga model test --tests /dev/stdin
+    echo "--- finished"
+  done
+else
+  pkl eval -f yaml $param | fga model test --tests /dev/stdin
+fi
