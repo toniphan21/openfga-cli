@@ -1,0 +1,13 @@
+import "lib/gen.pkl"
+
+open class BaseProjectListObjects {
+    function can_read(projects: Listing<gen.BaseProject>) = new Mapping { 
+        ["can_read"] = projects.fold(
+            (new Listing {}).toList(), 
+            (list: List, item: gen.BaseProject) -> list.add(item.toFGAType())
+        )
+    }
+}
+
+class ProjectListObjects extends BaseProjectListObjects {
+}

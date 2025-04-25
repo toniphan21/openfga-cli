@@ -4,19 +4,25 @@ import "lib/test.pkl"
 local Anna: type.User = new type.User { id = "Anna" }
 local SWM: type.Tenant = new type.Tenant { id = "SWM" }
 local ProjectA: type.Project = new type.Project { id = "ProjectA" }
+local ProjectB: type.Project = new type.Project { id = "ProjectB" }
 
 suite: test.OpenFGATestSuite = new {
   name = "Basic test"
   model = read("../model.fga")
   setup {
-    Anna.relation_admin(SWM)
-    SWM.relation_tenant(ProjectA)
+    Anna.is_admin_of(SWM)
+    SWM.has_project(ProjectA)
+    SWM.has_project(ProjectB)
   }
   tests {
     Anna.in_project(ProjectA, (she) -> new Listing {
       she.should_not_be_owner
       she.can_read
-   })
+    })
+
+    Anna.list_objects_project("list objects test", (she) -> new Listing {
+      she.can_read(new Listing { ProjectA ProjectB })
+    })
   }
 }
 
