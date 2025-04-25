@@ -1,0 +1,20 @@
+
+
+local a: Mapping = new Mapping {
+    ["can_read"] { "1" }
+}
+local b: Mapping = new Mapping {
+    ["can_read"] { "2" }
+}
+local c: Mapping = new Mapping {
+    ["can_read"] { "3" }
+}
+
+local d = new Listing { a b c }
+
+local e = d.map((result: Map, map: Mapping) -> 
+    map.toMap().map((k: String, v: Any) -> Pair(k, new Listing { v }))
+    // map.every((key: String, value: String) -> )
+)
+
+name = e

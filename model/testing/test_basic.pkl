@@ -2,7 +2,10 @@ import "type.pkl"
 import "lib/test.pkl"
 
 local Anna: type.User = new type.User { id = "Anna" }
+local Beth: type.User = new type.User { id = "Beth" }
+
 local SWM: type.Tenant = new type.Tenant { id = "SWM" }
+
 local ProjectA: type.Project = new type.Project { id = "ProjectA" }
 local ProjectB: type.Project = new type.Project { id = "ProjectB" }
 
@@ -13,6 +16,8 @@ suite: test.OpenFGATestSuite = new {
     Anna.is_admin_of(SWM)
     SWM.has_project(ProjectA)
     SWM.has_project(ProjectB)
+
+    Beth.relation_owner(ProjectA)
   }
   tests {
     Anna.in_project(ProjectA, (she) -> new Listing {
@@ -20,8 +25,12 @@ suite: test.OpenFGATestSuite = new {
       she.can_read
     })
 
-    Anna.list_objects_project("list objects test", (she) -> new Listing {
-      she.can_read(new Listing { ProjectA ProjectB })
+    Anna.check_projects((she) -> new Listing {
+      she.can_read(List(ProjectA, ProjectB))
+    })
+
+    Beth.check_projects((she) -> new Listing {
+      she.is_owner_of(List(ProjectA))
     })
   }
 }

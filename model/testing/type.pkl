@@ -73,15 +73,6 @@ class User extends gen.BaseUser {
   function in_project(project: Project, asserts: (assertions.ProjectAssertions) -> Listing) =
     assert_project("test user \(id) in project \(project.id)", project, new assertions.ProjectAssertions {}, asserts)
 
-  function list_objects_project(name: String, lists: (lists.ProjectListObjects) -> Listing): Mapping = new Mapping {
-    ["name"] = name
-    ["list_objects"] = new Listing {
-      new Mapping {
-        ["user"] = toFGAType()
-        ["type"] = "project"
-        ["assertions"] = lists.apply(new lists.ProjectListObjects {})
-          .fold(new Mapping {}, (r: Mapping, m: Mapping) -> r.toMap() + m.toMap())
-      }
-    }
-  }
+  function check_projects(asserts: (lists.ProjectListObjects) -> Listing) =
+    assert_list_objects_project("test user \(id) list objects project", new lists.ProjectListObjects {}, asserts)
 }
